@@ -5,23 +5,48 @@
 #include "Math/Random.h"
 #include <iostream>
 
-nc::Vector2 position{ 400, 300 };
+const size_t NUM_POINTS = 40;
+float speed = 5.0f;
 std::vector<nc::Vector2> points;
+nc::Vector2 position{ 400.0f, 300.0f };
+
 
 
 bool Update(float dt)
 {
-	return false;
+	bool quit = Core::Input::IsPressed(Core::Input::KEY_ESCAPE);
+	
+	int x;
+	int y;
+	Core::Input::GetMousePos(x, y);
+
+	nc::Vector2 target = nc::Vector2{ x,y };
+	nc::Vector2 direction = target - position; // (head <- tail)
+	direction.Normalize();
+
+	position += direction * 5.0f;
+
+	if (Core::Input::IsPressed(Core::Input::KEY_LEFT)) { position += nc::Vector2{ -1.0f, 0.0f } * speed; }
+	if (Core::Input::IsPressed(Core::Input::KEY_RIGHT)) { position += nc::Vector2{ 1.0f, 0.0f } * speed; }
+	if (Core::Input::IsPressed(Core::Input::KEY_UP)) { position += nc::Vector2{ 0.0f, -1.0f } * speed; }
+	if (Core::Input::IsPressed(Core::Input::KEY_DOWN)) { position += nc::Vector2{ 0.0f, 1.0f } * speed; }
+
+	for (nc::Vector2& point : points) {
+		point = { nc::random(-10.0f, 10.0f), nc::random(-10.0f, 10.0f) };
+	}
+
+
+	return quit;
 }
 
 void Draw(Core::Graphics& graphics)
 {
 	graphics.SetColor(RGB(rand() % 256, rand() % 256, rand() % 256));
-	graphics.DrawLine(static_cast<float>(rand() % 800), static_cast<float>(rand() % 600), static_cast<float>(rand() % 800), static_cast<float>(rand() % 600));
+	//graphics.DrawLine(static_cast<float>(rand() % 800), static_cast<float>(rand() % 600), static_cast<float>(rand() % 800), static_cast<float>(rand() % 600));
 
-	for (size_t i = 0; i < 40 - 1; i++) {
-		nc::Vector2 p1 = points[i];
-		nc::Vector2 p2 = points[i + 1];
+	for (size_t i = 0; i < NUM_POINTS - 1; i++) {
+		nc::Vector2 p1 = position + points[i] * 5.0f;
+		nc::Vector2 p2 = position + points[i + 1] + 5.0f;
 
 		graphics.DrawLine(p1.x, p1.y, p2.x, p2.y);
 	}
@@ -30,7 +55,7 @@ void Draw(Core::Graphics& graphics)
 
 int main()
 {
-	for (size_t i = 0; i < 40; i++) {
+	for (size_t i = 0; i < NUM_POINTS; i++) {
 		points.push_back(nc::Vector2{ nc::random(0.0f, 800.0f), nc::random(0.0f, 600.0f) });
 	}
 
