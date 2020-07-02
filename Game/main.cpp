@@ -3,12 +3,18 @@
 #include "Math/Math.h"
 #include "Math/Vector2.h"
 #include "Math/Random.h"
+#include "Math/Color.h"
 #include <iostream>
 
 const size_t NUM_POINTS = 40;
 float speed = 5.0f;
-std::vector<nc::Vector2> points;
+
+std::vector<nc::Vector2> points = { { 0, -3 }, { 3, 3 }, { 0, 1 }, { -3, 3 }, { 0, -3 } };
+nc::Color color{ 0, 1, 0 };
+
 nc::Vector2 position{ 400.0f, 300.0f };
+float scale = 4.0f;
+float angle = 0.0f;
 
 
 
@@ -24,16 +30,19 @@ bool Update(float dt)
 	nc::Vector2 direction = target - position; // (head <- tail)
 	direction.Normalize();
 
-	position += direction * 5.0f;
+	//position += direction * 5.0f;
 
-	if (Core::Input::IsPressed(Core::Input::KEY_LEFT)) { position += nc::Vector2{ -1.0f, 0.0f } * speed; }
-	if (Core::Input::IsPressed(Core::Input::KEY_RIGHT)) { position += nc::Vector2{ 1.0f, 0.0f } * speed; }
-	if (Core::Input::IsPressed(Core::Input::KEY_UP)) { position += nc::Vector2{ 0.0f, -1.0f } * speed; }
-	if (Core::Input::IsPressed(Core::Input::KEY_DOWN)) { position += nc::Vector2{ 0.0f, 1.0f } * speed; }
+	if (Core::Input::IsPressed(Core::Input::KEY_LEFT)) { angle -= dt * 2.0f; }
+	if (Core::Input::IsPressed(Core::Input::KEY_RIGHT)) { angle += dt * 2.0f; }
 
-	for (nc::Vector2& point : points) {
+	//if (Core::Input::IsPressed(Core::Input::KEY_LEFT)) { position += nc::Vector2{ -1.0f, 0.0f } * speed; }
+	//if (Core::Input::IsPressed(Core::Input::KEY_RIGHT)) { position += nc::Vector2{ 1.0f, 0.0f } * speed; }
+	//if (Core::Input::IsPressed(Core::Input::KEY_UP)) { position += nc::Vector2{ 0.0f, -1.0f } * speed; }
+	//if (Core::Input::IsPressed(Core::Input::KEY_DOWN)) { position += nc::Vector2{ 0.0f, 1.0f } * speed; }
+
+	/*for (nc::Vector2& point : points) {
 		point = { nc::random(-10.0f, 10.0f), nc::random(-10.0f, 10.0f) };
-	}
+	}*/
 
 
 	return quit;
@@ -41,12 +50,28 @@ bool Update(float dt)
 
 void Draw(Core::Graphics& graphics)
 {
-	graphics.SetColor(RGB(rand() % 256, rand() % 256, rand() % 256));
+
+
+	graphics.SetColor(color.Pack888());
 	//graphics.DrawLine(static_cast<float>(rand() % 800), static_cast<float>(rand() % 600), static_cast<float>(rand() % 800), static_cast<float>(rand() % 600));
 
-	for (size_t i = 0; i < NUM_POINTS - 1; i++) {
-		nc::Vector2 p1 = position + points[i] * 5.0f;
-		nc::Vector2 p2 = position + points[i + 1] + 5.0f;
+	for (size_t i = 0; i < points.size() - 1; i++) {
+		
+		//local / object space points
+		nc::Vector2 p1 = points[i];
+		nc::Vector2 p2 = points[i + 1];
+
+		//transform
+		//scale
+		p1 *= scale;
+		p2 *= scale;
+		//rotate
+		p1 = nc::Vector2::Rotate(p1, angle);
+		p2 = nc::Vector2::Rotate(p2, angle);
+		//translate
+		p1 += position;
+		p2 += position;
+
 
 		graphics.DrawLine(p1.x, p1.y, p2.x, p2.y);
 	}
@@ -55,9 +80,9 @@ void Draw(Core::Graphics& graphics)
 
 int main()
 {
-	for (size_t i = 0; i < NUM_POINTS; i++) {
+	/*for (size_t i = 0; i < NUM_POINTS; i++) {
 		points.push_back(nc::Vector2{ nc::random(0.0f, 800.0f), nc::random(0.0f, 600.0f) });
-	}
+	}*/
 
 	char name[] = "CSC196";
 	Core::Init(name, 800, 600);
