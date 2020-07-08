@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 
 namespace nc {
 	struct Vector2 {
@@ -35,6 +36,8 @@ namespace nc {
 		Vector2& operator *= (float s) { x *= s, y *= s; return *this; }
 		Vector2& operator /= (float s) { x /= s, y /= s; return *this; }
 
+		friend std::istream& operator >> (std::istream& stream, Vector2& v); // stream >> v
+		
 		float Length() const;
 		float LengthSqr() const;
 
@@ -44,6 +47,12 @@ namespace nc {
 		void Normalize();
 
 		static Vector2 Rotate(const Vector2& v, float radians);
+
+		static const Vector2 left;
+		static const Vector2 right;
+		static const Vector2 up;
+		static const Vector2 down;
+		static const Vector2 forward;
 	};
 
 	inline float Vector2::Length() const {
