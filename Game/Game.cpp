@@ -13,9 +13,9 @@ const size_t NUM_POINTS = 40;
 float speed = 250.0f;
 
 nc::Shape ship;
-//nc::Shape ship{ points, color };
-
 nc::Transform transform{ {400, 300}, 3, 0 };
+
+float t{ 0 };
 
 float frametime;
 float roundTime{ 0 };
@@ -33,7 +33,7 @@ bool Update(float dt) // delta time (60 fps) (1 / 60 = 0.016)
 
 	prevTime = time;
 
-
+	t = t + dt * 5;
 
 	bool quit = Core::Input::IsPressed(Core::Input::KEY_ESCAPE);
 	
@@ -59,8 +59,13 @@ bool Update(float dt) // delta time (60 fps) (1 / 60 = 0.016)
 	direction = nc::Vector2::Rotate(direction, transform.angle);
 	transform.position += direction;
 
-	if (Core::Input::IsPressed(Core::Input::KEY_LEFT)) { transform.angle -= dt * 3.0f; }
-	if (Core::Input::IsPressed(Core::Input::KEY_RIGHT)) { transform.angle += dt * 3.0f; }
+	if (Core::Input::IsPressed(Core::Input::KEY_LEFT)) { transform.angle -= dt * nc::dtor(360.0f); }
+	if (Core::Input::IsPressed(Core::Input::KEY_RIGHT)) { transform.angle += dt * nc::dtor(360.0f); }
+
+	transform.position = nc::Clamp(transform.position, { 0, 0 }, { 800, 600 });
+
+	/*transform.position.x = nc::Clamp(transform.position.x, 0.0f, 800.0f);
+	transform.position.y = nc::Clamp(transform.position.y, 0.0f, 600.0f);*/
 
 	//if (Core::Input::IsPressed(Core::Input::KEY_LEFT)) { position += nc::Vector2::left * speed * dt; }
 	//if (Core::Input::IsPressed(Core::Input::KEY_RIGHT)) { position += nc::Vector2::right * speed * dt; }
@@ -80,7 +85,13 @@ void Draw(Core::Graphics& graphics)
 	graphics.DrawString(10, 20, std::to_string(1.0f / frametime).c_str());
 	graphics.DrawString(10, 30, std::to_string(deltaTime).c_str());
 
-	
+	float v = (std::sin(t) + 1.0f) * 0.5f;
+
+	nc::Color c = nc::Lerp(nc::Color{ 0, 0, 1 }, nc::Color{ 1, 0, 0 }, v);
+	graphics.SetColor(c);
+
+	nc::Vector2 p = nc::Lerp(nc::Vector2{ 40, 300 }, nc::Vector2{ 400, 100 }, v);
+	graphics.DrawString(p.x, p.y, "LSF");
 	//graphics.DrawLine(static_cast<float>(rand() % 800), static_cast<float>(rand() % 600), static_cast<float>(rand() % 800), static_cast<float>(rand() % 600));
 
 	if (gameOver) graphics.DrawString(400, 300, "Game Over");
