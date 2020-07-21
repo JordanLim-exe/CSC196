@@ -2,7 +2,7 @@
 #include <random>
 
 namespace nc {
-	float random() {
+	float randomTrue() {
 		return rand() / static_cast<float>(RAND_MAX);
 	}
 
@@ -11,6 +11,6 @@ namespace nc {
 			std::swap(min, max);
 		}
 
-		return min + (max - min) * random();
+		return min + (max - min) * randomTrue();
 	}
 }
