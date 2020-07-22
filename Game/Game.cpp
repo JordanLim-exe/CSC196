@@ -11,6 +11,7 @@
 #include "..\Game\Actors\Player.h"
 #include "..\Game\Actors\Enemy.h"
 #include "..\Game\Actors\Projectile.h"
+#include "Graphics/ParticleSystem.h"
 #include <iostream>
 #include <string>
 #include <list>
@@ -31,6 +32,7 @@
 //std::list<nc::Actor*> actors;
 
 nc::Scene scene;
+nc::ParticleSystem ps;
 
 float spawntimer{ 0 };
 
@@ -101,8 +103,8 @@ bool Update(float dt) // delta time (60 fps) (1 / 60 = 0.016)
 
 	bool quit = Core::Input::IsPressed(Core::Input::KEY_ESCAPE);
 
+	ps.Update(dt);
 	scene.Update(dt);
-	
 	
 
 	spawntimer += dt;
@@ -120,6 +122,8 @@ bool Update(float dt) // delta time (60 fps) (1 / 60 = 0.016)
 
 	}
 
+	nc::Player* player = scene.GetActor<nc::Player>();
+	ps.Create(player->GetTransform().position, player->GetTransform().angle + nc::PI, 20, 1, nc::Color(1, 1, 1), 1, 100, 200);
 	
 
 	return quit;
@@ -154,6 +158,7 @@ void Draw(Core::Graphics& graphics)
 	//	p2 += position;
 	//	graphics.DrawLine(p1.x, p1.y, p2.x, p2.y);
 	//}
+	ps.Draw(graphics);
 	scene.Draw(graphics);
 
 }
@@ -162,6 +167,8 @@ int main()
 {
 	DWORD ticks = GetTickCount();
 	std::cout << ticks / 1000 / 60 / 60 << std::endl;
+
+	ps.Startup();
 
 	nc::Actor* player = new nc::Player;
 	player->Load("player.txt");
@@ -186,6 +193,8 @@ int main()
 
 	Core::GameLoop();
 	Core::Shutdown();
+	//scene.Shutdown();
+	ps.Shutdown();
 }
 
 

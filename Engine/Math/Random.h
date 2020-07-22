@@ -2,11 +2,11 @@
 #include <random>
 
 namespace nc {
-	float randomTrue() {
+	inline float randomTrue() {
 		return rand() / static_cast<float>(RAND_MAX);
 	}
 
-	float random(float min, float max) {
+	inline float random(float min, float max) {
 		if (min > max) {
 			std::swap(min, max);
 		}
