@@ -13,6 +13,7 @@ namespace nc {
 
 		virtual void Update(float dt) override;
 		
+		virtual void OnCollision(Actor* actor);
 
 	protected:
 		float m_thrust;

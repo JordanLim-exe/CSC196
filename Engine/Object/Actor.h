@@ -31,6 +31,8 @@ namespace nc
 
 		virtual void OnCollision(Actor* actor) {}
 
+		float GetRadius();
+
 		void SetScene(class Scene* scene) { m_scene = scene; }
 		Transform& GetTransform() { return m_transform; } // return the transform
 		Shape& GetShape() { return m_shape; } // return the shape

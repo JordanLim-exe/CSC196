@@ -15,7 +15,10 @@ namespace nc {
 
 		void SetThrust(float thrust) { m_thrust = thrust; }
 
+		virtual void OnCollision(Actor* actor);
+
 	protected:
 		float m_thrust{ 0.0f };
+		float m_lifetime{ 3 };
 	};
 }

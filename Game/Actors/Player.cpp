@@ -2,6 +2,8 @@
 #include "Projectile.h"
 #include "Math/Math.h"
 #include "Object\Scene.h"
+#include "..\Game.h"
+#include "Graphics\ParticleSystem.h"
 #include <fstream>
 
 namespace nc
@@ -101,6 +103,9 @@ namespace nc
 		if (m_transform.position.y > 600) m_transform.position.y = 0;
 		if (m_transform.position.y < 0) m_transform.position.y = 600;
 
+		if (force.LengthSqr() > 0) {
+			g_ps.Create(m_transform.position, m_transform.angle + nc::PI, 20, 1, nc::Color::white, 1, 100, 200);
+		}
 		m_transform.Update();
 
 		//player.GetTransform().position = nc::Clamp(player.GetTransform().position, { 0, 0 }, { 800, 600 });
@@ -125,6 +130,13 @@ namespace nc
                 // and
                 // if (Core::Input::IsPressed('A')) { m_transform.angle = m_transform.angle - (nc::DegreesToRadians(m_rotationRate) * dt); }
     }
+
+	void Player::OnCollision(Actor* actor)
+	{
+		if (actor->GetType() == eType::ENEMY) {
+			m_scene->GetGame()->SetState(Game::eState::GAME_OVER);
+		}
+	}
 
     
 }

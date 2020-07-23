@@ -23,3 +23,4 @@ namespace nc {
 }
 
 
+extern nc::ParticleSystem g_ps;

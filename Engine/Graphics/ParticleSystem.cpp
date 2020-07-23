@@ -3,10 +3,12 @@
 #include "Math/Random.h"
 #include "Math/Math.h"
 
+nc::ParticleSystem g_ps;
+
 void nc::ParticleSystem::Startup()
 {
-	m_particles = new Particle[300];
-	m_size = 300;
+	m_size = 3000;
+	m_particles = new Particle[m_size];
 }
 
 void nc::ParticleSystem::Shutdown()

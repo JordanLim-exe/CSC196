@@ -1,5 +1,8 @@
 #include "Enemy.h"
 #include "Math/Math.h"
+#include "Graphics/ParticleSystem.h"
+#include "Object/Scene.h"
+#include "../Game.h"
 #include <fstream>
 
 namespace nc {
@@ -44,6 +47,14 @@ namespace nc {
 	{
         if (actor->GetType() == eType::PROJECTILE) {
             m_destroy = true;
+
+            //set game score
+            m_scene->GetGame()->AddPoints(5);
+
+            nc::Color colors[] = { nc::Color::white, nc::Color::red, nc::Color::blue, nc::Color::green, nc::Color::yellow, nc::Color::magenta };
+            nc::Color color = colors[rand() % 6];
+
+            g_ps.Create({ m_transform.position.x, m_transform.position.y }, 0, 180, 30, color, 1, 100, 200);
         }
 	}
 }
