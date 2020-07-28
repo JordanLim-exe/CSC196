@@ -31,6 +31,14 @@ namespace nc {
 		m_shape.Load(shapename);
 	}
 
+	void Actor::Destroy()
+	{
+		for (auto child : m_children) {
+			delete child;
+		}
+		m_children.clear();
+	}
+
 	void nc::Actor::Update(float dt)
 	{
 	}
@@ -43,6 +51,13 @@ namespace nc {
 	float Actor::GetRadius()
 	{
 		return m_shape.GetRadius() * m_transform.scale;
+	}
+
+	void Actor::AddChild(Actor* child)
+	{
+		child->m_parent = this;
+
+		m_children.push_back(child);
 	}
 
 }

@@ -18,6 +18,7 @@ namespace nc
 
 		void AddActor(class Actor* actor);
 		void RemoveActor(class Actor* object);
+		void RemoveAllActors();
 
 		template <typename T>
 		T* GetActor() {
@@ -32,7 +33,7 @@ namespace nc
 
 		template <typename T>
 		std::vector<T*> GetActors() {
-			std::vector<nc::Actor*> results;
+			std::vector<T*> results;
 			for (nc::Actor* actor : m_actors) {
 				T* result = dynamic_cast<T*>(actor);
 				if (result) {

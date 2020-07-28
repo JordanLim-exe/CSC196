@@ -5,6 +5,7 @@
 #include "..\Game.h"
 #include "Graphics\ParticleSystem.h"
 #include <fstream>
+#include "Audio/AudioSystem.h"
 
 namespace nc
 {
@@ -45,6 +46,7 @@ namespace nc
 			}
 			scene.Shutdown();*/
 			m_firetimer = 0;
+			g_audioSystem.PlayAudio("Laser");
 			Projectile* projectile = new Projectile;
 			projectile->Load("projectile.txt");
 			projectile->GetTransform().position = m_transform.position;
@@ -89,14 +91,19 @@ namespace nc
 		nc::Vector2 force;
 		if (Core::Input::IsPressed(Core::Input::KEY_UP)) { force = nc::Vector2::forward * m_thrust; }
 		force = nc::Vector2::Rotate(force, m_transform.angle);
-		force += nc::Vector2{ 0, 50 };
+		force += nc::Vector2{ 0, 0 };
 
 		velocity += force * dt;
-		velocity *= 0.99f;
+		velocity *= 0.97f;
 		m_transform.position += velocity * dt;
 
-		if (Core::Input::IsPressed(Core::Input::KEY_LEFT)) { m_transform.angle -= dt * nc::dtor(360.0f); }
-		if (Core::Input::IsPressed(Core::Input::KEY_RIGHT)) { m_transform.angle += dt * nc::dtor(360.0f); }
+		float torque = 0;
+		if (Core::Input::IsPressed(Core::Input::KEY_LEFT)) { torque = -nc::dtor(m_rotation); }
+		if (Core::Input::IsPressed(Core::Input::KEY_RIGHT)) { torque = nc::dtor(m_rotation); }
+
+		m_angularVelocity += torque * dt;
+		m_angularVelocity *= 0.95f;
+		m_transform.angle += m_angularVelocity * dt;
 
 		if (m_transform.position.x > 800) m_transform.position.x = 0;
 		if (m_transform.position.x < 0) m_transform.position.x = 800;
@@ -104,37 +111,29 @@ namespace nc
 		if (m_transform.position.y < 0) m_transform.position.y = 600;
 
 		if (force.LengthSqr() > 0) {
-			g_ps.Create(m_transform.position, m_transform.angle + nc::PI, 20, 1, nc::Color::white, 1, 100, 200);
+			Actor* locator = m_children[0];
+			g_ps.Create(locator->GetTransform().matrix.GetPosition(), locator->GetTransform().matrix.GetAngle() + nc::PI, 20, 1, nc::Color::white, 1, 100, 200);
+
+			locator = m_children[1];
+			g_ps.Create(locator->GetTransform().matrix.GetPosition(), locator->GetTransform().matrix.GetAngle() + nc::PI, 20, 1, nc::Color::white, 1, 100, 200);
 		}
 		m_transform.Update();
 
-		//player.GetTransform().position = nc::Clamp(player.GetTransform().position, { 0, 0 }, { 800, 600 });
-
-		//enemy
-		
-
-
-		/*transform.position.x = nc::Clamp(transform.position.x, 0.0f, 800.0f);
-		transform.position.y = nc::Clamp(transform.position.y, 0.0f, 600.0f);*/
-		//if (Core::Input::IsPressed(Core::Input::KEY_LEFT)) { position += nc::Vector2::left * speed * dt; }
-		//if (Core::Input::IsPressed(Core::Input::KEY_RIGHT)) { position += nc::Vector2::right * speed * dt; }
-		//if (Core::Input::IsPressed(Core::Input::KEY_UP)) { position += nc::Vector2::up * speed * dt; }
-		//if (Core::Input::IsPressed(Core::Input::KEY_DOWN)) { position += nc::Vector2::down * speed * dt; }
-		/*for (nc::Vector2& point : points) {
-			point = { nc::random(-10.0f, 10.0f), nc::random(-10.0f, 10.0f) };
-		}*/
-
-        // you will be using the m_transform, thrust and rotation rate of this class
-                // example:
-                // m_transform.position = m_transform.position + m_velocity * dt;
-                // and
-                // if (Core::Input::IsPressed('A')) { m_transform.angle = m_transform.angle - (nc::DegreesToRadians(m_rotationRate) * dt); }
+		for (auto child: m_children) {
+			child->Update(dt);
+		}
     }
 
 	void Player::OnCollision(Actor* actor)
 	{
 		if (actor->GetType() == eType::ENEMY) {
-			m_scene->GetGame()->SetState(Game::eState::GAME_OVER);
+			m_scene->GetGame()->SetState(Game::eState::PLAYER_DEAD);
+			m_destroy = true;
+
+			nc::Color colors[] = { nc::Color::white, nc::Color::red, nc::Color::blue, nc::Color::green, nc::Color::yellow, nc::Color::magenta };
+			nc::Color color = colors[rand() % 6];
+
+			g_ps.Create({ m_transform.position.x, m_transform.position.y }, 0, 180, 30, color, 1, 100, 200);
 		}
 	}
 

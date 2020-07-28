@@ -11,7 +11,8 @@ namespace nc
 		enum class eType {
 			PLAYER,
 			ENEMY,
-			PROJECTILE
+			PROJECTILE,
+			LOCATOR
 		};
 
 
@@ -25,6 +26,7 @@ namespace nc
 		virtual bool Load(const std::string& filename);
 		virtual void Load(std::istream& stream);
 
+		virtual void Destroy();
 
 		virtual void Update(float dt);
 		virtual void Draw(Core::Graphics& graphics);
@@ -40,10 +42,16 @@ namespace nc
 		void SetDestroy(bool destroy = true) { m_destroy = destroy; }
 		bool IsDestroy() { return m_destroy; }
 
+		void AddChild(Actor* child);
+		Actor* GetParent() { return m_parent; }
+
 	protected:
 		bool m_destroy{ false };
 		Scene* m_scene{ nullptr };
 		Transform m_transform;
 		Shape m_shape;
+
+		Actor* m_parent{ nullptr };
+		std::vector<Actor*> m_children;
 	};
 }

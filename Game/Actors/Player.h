@@ -21,5 +21,7 @@ namespace nc {
 		Vector2 velocity;
 		float m_firetimer{ 0.2f };
 		float m_firerate{ 0.2f };
+
+		float m_angularVelocity{ 0 };
 	};
 }

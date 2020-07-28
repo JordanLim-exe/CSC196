@@ -11,14 +11,7 @@ namespace nc
 
 	void Scene::Shutdown()
 	{
-		// iterate through the actors and call delete on each actor
-		// this will free up the memory for each actor
-		for (nc::Actor* actor : m_actors) {
-			RemoveActor(actor);
-		}
-		
-		// clear m_actors list
-		m_actors.clear();
+		RemoveAllActors();
 	}
 
 	void Scene::Update(float dt)
@@ -41,6 +34,7 @@ namespace nc
 		auto iter = m_actors.begin();
 		while (iter != m_actors.end()) {
 			if ((*iter)->IsDestroy()) {
+				(*iter)->Destroy();
 				delete* iter;
 				iter = m_actors.erase(iter);
 			}
@@ -78,5 +72,12 @@ namespace nc
 			delete* iter;
 			m_actors.erase(iter);
 		}
+	}
+	void Scene::RemoveAllActors()
+	{
+		for (Actor* actor : m_actors) {
+			delete actor;
+		}
+		m_actors.clear();
 	}
 }

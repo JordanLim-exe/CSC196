@@ -32,11 +32,15 @@ namespace nc {
     void Enemy::Update(float dt)
     {
         // this code will be the current code to control the enemy that is in main.cpp/Game.cpp
+        nc::Vector2 direction;
+        if (m_target) {
+            direction = m_target->GetTransform().position - m_transform.position;
+            m_transform.angle = std::atan2(direction.y, direction.x) + nc::dtor(90.0f);
 
-        nc::Vector2 direction = m_target->GetTransform().position - m_transform.position;
-        nc::Vector2 e_velocity = direction.Normalized() * 0;// m_thrust;
+        }
+
+        nc::Vector2 e_velocity = direction.Normalized() * m_thrust;
         m_transform.position += e_velocity * dt;
-        m_transform.angle = std::atan2(direction.y, direction.x) + nc::dtor(90.0f);
 
         m_transform.Update();
         // to compute the direction to move towards, use the pointer to the player actor
@@ -49,7 +53,7 @@ namespace nc {
             m_destroy = true;
 
             //set game score
-            m_scene->GetGame()->AddPoints(5);
+            m_scene->GetGame()->AddPoints(100);
 
             nc::Color colors[] = { nc::Color::white, nc::Color::red, nc::Color::blue, nc::Color::green, nc::Color::yellow, nc::Color::magenta };
             nc::Color color = colors[rand() % 6];

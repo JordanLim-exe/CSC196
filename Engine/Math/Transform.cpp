@@ -27,4 +27,9 @@ namespace nc {
 
 		matrix = mxScale * mxRotate * mxTranslate;
 	}
+	void Transform::Update(const Matrix33& mx)
+	{
+		Update();
+		matrix = matrix * mx;
+	}
 }

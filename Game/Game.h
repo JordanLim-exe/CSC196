@@ -9,6 +9,8 @@ public:
 		INIT,
 		TITLE,
 		START_GAME,
+		PLAYER_DEAD,
+		GAME_WAIT,
 		GAME,
 		GAME_OVER
 	};
@@ -23,11 +25,12 @@ public:
 	void SetState(eState state) { m_state = state; }
 
 protected:
-	eState m_state{ eState::TITLE };
+	eState m_state{ eState::INIT };
 	int m_lives{ 3 };
 	int m_score{ 0 };
 	nc::Scene m_scene;
 
 	float m_spawntimer{ 0 };
+	float m_stateTimer{ 0 };
 };
 

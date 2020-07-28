@@ -1,5 +1,7 @@
 #include "core.h"
 #include "Game.h"
+#include "Audio/AudioSystem.h"
+#include <time.h>
 
 Game game;
 
@@ -15,6 +17,10 @@ void Draw(Core::Graphics& graphics)
 
 int main()
 {
+	srand(static_cast<unsigned int>(time(NULL)));
+
+
+	g_audioSystem.Startup();
 	game.Startup();
 
 	char name[] = "CSC196";
@@ -26,6 +32,7 @@ int main()
 	Core::Shutdown();
 	
 	game.Shutdown();
+	g_audioSystem.Shutdown();
 }
 
 
